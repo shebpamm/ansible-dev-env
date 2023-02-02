@@ -7,8 +7,8 @@ Right now probably only x64-linux works because it's using the package github:sh
 1. Clone this repo  
 2. `docker run -it -v $(pwd):/data nixos/nix`  
   
-Now inside docker:
-3. `cd /data`
+Now inside docker:  
+3. `cd /data`  
 4. Install cachix to speed up installation with prebuilt binaries
 ```
 nix-env -iA cachix -f https://cachix.org/api/v1/install
