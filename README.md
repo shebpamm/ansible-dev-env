@@ -1,6 +1,10 @@
 Here's my day to day env I use in ROOT. This codebase was originally just a nix flake but I've moved to devenv now.
 
-Right now probably only x64-linux works because it's using the package github:shebpamm/ansible-mitogen (made by me) and I don't think I've made the package support other platforms out of lazyness yet. I should fix that.
+Should now work on the following architectures:  
+- aarch64-darwin
+- aarch64-linux
+- x86_64-darwin
+- x86_64-linux
 
 ## Quickstart in docker if ya want to fiddle
 
