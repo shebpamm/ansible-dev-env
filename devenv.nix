@@ -3,16 +3,65 @@ let
   stable-pkgs = import inputs.nixpkgs-stable { system = pkgs.system; };
   mitogen-pkg = inputs.ansible-mitogen.defaultPackage.x86_64-linux;
 
-  zabbix-api = with pkgs.python39.pkgs; buildPythonPackage rec {
-    pname = "zabbix-api";
-    version = "0.5.5";
-    src = fetchPypi {
-      inherit pname version;
-      sha256 = "sha256-fnuEeSCQvTqlRvzLDhPIMNv+BDEwNQmwCfbSeDyiQY0=";
-    };
-  };
+  ansible_2_9 = with pkgs.python310.pkgs; buildPythonPackage
+    rec {
+      pname = "ansible";
+      version = "2.9.27";
 
-  py-zabbix = with pkgs.python39.pkgs; buildPythonPackage {
+      src = fetchPypi {
+        inherit pname version;
+        sha256 = "sha256-R5FZ5Qs72Qkg0GvFlBDDpR0/m+m04QKeEdHkotBwVzY=";
+      };
+
+      prePatch = ''
+        # ansible-connection is wrapped, so make sure it's not passed
+        # through the python interpreter.
+        sed -i "s/\[python, /[/" lib/ansible/executor/task_executor.py
+      '';
+
+      postInstall = ''
+        for m in docs/man/man1/*; do
+          install -vD $m -t $out/share/man/man1
+        done
+      '';
+
+      propagatedBuildInputs = [
+        pycrypto
+        paramiko
+        jinja2
+        pyyaml
+        httplib2
+        six
+        netaddr
+        dnspython
+        jmespath
+        dopy
+        ncclient
+      ];
+
+      # dificult to test
+      doCheck = false;
+
+      meta = with lib; {
+        homepage = "https://www.ansible.com";
+        description = "Radically simple IT automation";
+        license = [ licenses.gpl3 ];
+        maintainers = with maintainers; [ joamaki costrouc hexa ];
+        platforms = platforms.linux ++ platforms.darwin;
+      };
+    };
+
+  zabbix-api = with pkgs.python310.pkgs;
+    buildPythonPackage rec {
+      pname = "zabbix-api";
+      version = "0.5.5";
+      src = fetchPypi {
+        inherit pname version;
+        sha256 = "sha256-fnuEeSCQvTqlRvzLDhPIMNv+BDEwNQmwCfbSeDyiQY0=";
+      };
+    };
+
+  py-zabbix = with pkgs.python310.pkgs; buildPythonPackage {
     pname = "py-zabbix";
     version = "1.7.7";
     format = "wheel";
@@ -25,16 +74,15 @@ in
 {
   devcontainer.enable = true;
   languages.python.enable = true;
-  languages.python.package = pkgs.python39;
+  languages.python.package = pkgs.python310;
   packages = [
-    stable-pkgs.ansible_2_9
-    stable-pkgs.ansible-lint
-    stable-pkgs.python39Packages.hvac
-    stable-pkgs.python39Packages.pyvmomi
-    stable-pkgs.python39Packages.distro
+    ansible_2_9
+    pkgs.python310Packages.hvac
+    pkgs.python310Packages.pyvmomi
+    pkgs.python310Packages.distro
     zabbix-api
     py-zabbix
-    (stable-pkgs.python39Packages.mitogen.overridePythonAttrs (old: rec {
+    (stable-pkgs.python310Packages.mitogen.overridePythonAttrs (old: rec {
       pname = "mitogen";
       version = "0.2.10";
       src = pkgs.fetchFromGitHub {
