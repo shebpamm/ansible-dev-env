@@ -24,6 +24,8 @@ let
 in
 {
   devcontainer.enable = true;
+  languages.python.enable = true;
+  languages.python.package = pkgs.python39;
   packages = [
     stable-pkgs.ansible_2_9
     stable-pkgs.ansible-lint
