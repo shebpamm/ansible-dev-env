@@ -12,6 +12,7 @@ in
     python310Packages.hvac
     python310Packages.pyvmomi
     python310Packages.distro
+    ansible-lint
     zabbix-api
     py-zabbix
     mitogen-pkg

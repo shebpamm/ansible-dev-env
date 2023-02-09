@@ -1,7 +1,8 @@
 self: super:
 let
   python-pkgs = super.python310.pkgs;
-in {
+in
+{
   ansible_2_9 = with python-pkgs; buildPythonPackage
     rec {
       pname = "ansible";
@@ -70,14 +71,24 @@ in {
     };
   };
 
-  mitogen = with python-pkgs; super.python311Packages.mitogen.overridePythonAttrs (old: rec {
-      pname = "mitogen";
-      version = "0.2.10";
-      src = fetchFromGitHub {
-        owner = "mitogen-hq";
-        repo = pname;
-        rev = "v${version}";
-        sha256 = "sha256-SFwMgK1IKLwJS8k8w/N0A/+zMmBj9EN6m/58W/e7F4Q=";
-      };
-    });
+  ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: rec {
+    version = "4.3.1";
+    pname = "ansible-lint";
+    postPatch = "";
+    src = python-pkgs.fetchPypi {
+      inherit pname version;
+      hash = "sha256-994JckNq5D0ogcfCNdkI5ybhRkcXeyQ5BkB1J2J5+MQ=";
+    };
+  });
+
+  mitogen = with python-pkgs; super.python310Packages.mitogen.overridePythonAttrs (old: rec {
+    pname = "mitogen";
+    version = "0.2.10";
+    src = fetchFromGitHub {
+      owner = "mitogen-hq";
+      repo = pname;
+      rev = "v${version}";
+      sha256 = "sha256-SFwMgK1IKLwJS8k8w/N0A/+zMmBj9EN6m/58W/e7F4Q=";
+    };
+  });
 }
