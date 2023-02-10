@@ -15,6 +15,7 @@ in
     ansible-lint
     zabbix-api
     py-zabbix
+    mitogen
     mitogen-pkg
     cdrkit
     sshpass

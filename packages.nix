@@ -81,10 +81,10 @@ in
     };
   });
 
-  mitogen = with python-pkgs; super.python310Packages.mitogen.overridePythonAttrs (old: rec {
+  mitogen = super.python310Packages.mitogen.overridePythonAttrs (old: rec {
     pname = "mitogen";
     version = "0.2.10";
-    src = fetchFromGitHub {
+    src = super.fetchFromGitHub {
       owner = "mitogen-hq";
       repo = pname;
       rev = "v${version}";
