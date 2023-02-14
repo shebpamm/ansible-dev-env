@@ -16,6 +16,7 @@ in
     python310Packages.hvac
     python310Packages.pyvmomi
     python310Packages.distro
+    ansible-modules-hashivault
     ansible-lint
     zabbix-api
     py-zabbix

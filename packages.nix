@@ -71,6 +71,16 @@ in
     };
   };
 
+  ansible-modules-hashivault = with python-pkgs;
+    buildPythonPackage rec {
+      pname = "ansible-modules-hashivault";
+      version = "1.1";
+      src = pkgs.fetchPypi {
+        inherit pname version;
+        sha256 = "sha256-wywxV9+zQAiwhXa/gtMkZcc2dhJY1NP9plEL0KXq7lo=";
+      };
+    };
+
   ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: rec {
     version = "4.3.1";
     pname = "ansible-lint";
@@ -80,6 +90,7 @@ in
       hash = "sha256-994JckNq5D0ogcfCNdkI5ybhRkcXeyQ5BkB1J2J5+MQ=";
     };
   });
+
 
   mitogen = super.python310Packages.mitogen.overridePythonAttrs (old: rec {
     pname = "mitogen";
