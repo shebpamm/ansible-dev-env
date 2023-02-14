@@ -81,16 +81,9 @@ in
       };
     };
 
-  ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: rec {
-    version = "4.3.1";
-    pname = "ansible-lint";
-    postPatch = "";
-    src = python-pkgs.fetchPypi {
-      inherit pname version;
-      hash = "sha256-994JckNq5D0ogcfCNdkI5ybhRkcXeyQ5BkB1J2J5+MQ=";
-    };
+  ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: {
+    makeWrapperArgs = [ "--unset PYTHONPATH" ];
   });
-
 
   mitogen = super.python310Packages.mitogen.overridePythonAttrs (old: rec {
     pname = "mitogen";
