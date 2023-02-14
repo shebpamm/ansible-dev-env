@@ -6,7 +6,11 @@ in
 {
   devcontainer.enable = true;
   languages.python.enable = true;
-  languages.python.package = pkgs.python310;
+  languages.python.package = pkgs.python310.withPackages (ps: with ps;
+    [
+      requests
+    ]
+  );
   packages = with patched-pkgs; [
     ansible_2_9
     python310Packages.hvac
