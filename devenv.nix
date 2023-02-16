@@ -1,6 +1,6 @@
 { inputs, pkgs, ... }:
 let
-  mitogen-pkg = inputs.ansible-mitogen.defaultPackage.x86_64-linux;
+  wrapMitogen = inputs.ansible-mitogen.wrapMitogen.${pkgs.system};
   patched-pkgs = pkgs.extend (import ./packages.nix);
 in
 {
@@ -12,7 +12,7 @@ in
     ]
   );
   packages = with patched-pkgs; [
-    ansible_2_9
+    (wrapMitogen ansible_2_9)
     python310Packages.hvac
     python310Packages.pyvmomi
     python310Packages.distro
@@ -20,8 +20,6 @@ in
     ansible-lint
     zabbix-api
     py-zabbix
-    mitogen
-    mitogen-pkg
     cdrkit
     sshpass
     cowsay
@@ -33,7 +31,5 @@ in
     azure-storage-azcopy
     infracost
   ];
-  env = {
-    ANSIBLE_CONFIG = "${mitogen-pkg.outPath}/ansible.cfg";
-  };
+  env = { };
 }
