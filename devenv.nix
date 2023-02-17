@@ -26,6 +26,7 @@ in
     lolcat
     awscli
     terraform
+    tfsec
     vault-bin
     azure-cli
     azure-storage-azcopy
