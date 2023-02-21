@@ -8,5 +8,6 @@ in
   packages = with patched-pkgs; [
     (wrapMitogen ansible_2_9)
     ansible-lint
+    mitogen
   ];
 }

@@ -51,6 +51,17 @@ in
       };
     };
 
+  mitogen = super.python310Packages.mitogen.overridePythonAttrs (old: rec {
+    pname = "mitogen";
+    version = "0.2.10";
+    src = super.fetchFromGitHub {
+      owner = "mitogen-hq";
+      repo = pname;
+      rev = "v${version}";
+      sha256 = "sha256-SFwMgK1IKLwJS8k8w/N0A/+zMmBj9EN6m/58W/e7F4Q=";
+    };
+  });
+
   ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: {
     makeWrapperArgs = [ "--unset PYTHONPATH" ];
   });
