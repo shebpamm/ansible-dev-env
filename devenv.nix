@@ -9,5 +9,6 @@ in
     (wrapMitogen ansible_2_9)
     ansible-lint
     mitogen
+    molecule
   ];
 }

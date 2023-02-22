@@ -62,6 +62,34 @@ in
     };
   });
 
+  molecule = with python-pkgs; buildPythonPackage rec {
+    pname = "molecule";
+    version = "4.0.4";
+    format = "pyproject";
+    src = super.fetchFromGitHub {
+      owner = "ansible-community";
+      repo = pname;
+      rev = "v${version}";
+      sha256 = "sha256-rnN/ITMKuQIWpn8hkD+qYcrB9PqLsM52BDuQ9j7Eqyw=";
+    };
+    doCheck = false;
+    makeWrapperArgs = [ "--unset PYTHONPATH" ];
+    propagatedBuildInputs = [
+      setuptools
+      click-help-colors
+      jinja2
+      enrich
+      jsonschema
+      packaging
+      pluggy
+      pyyaml
+      rich
+      cookiecutter
+      ansible-compat
+      ansible-core
+    ];
+  };
+
   ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: {
     makeWrapperArgs = [ "--unset PYTHONPATH" ];
   });
