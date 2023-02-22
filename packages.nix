@@ -2,7 +2,7 @@ self: super:
 let
   python-pkgs = super.python310.pkgs;
 in
-{
+rec {
   ansible_2_9 = with python-pkgs; buildPythonPackage
     rec {
       pname = "ansible";
@@ -62,32 +62,132 @@ in
     };
   });
 
-  molecule = with python-pkgs; buildPythonPackage rec {
-    pname = "molecule";
-    version = "4.0.4";
-    format = "pyproject";
-    src = super.fetchFromGitHub {
-      owner = "ansible-community";
-      repo = pname;
-      rev = "v${version}";
-      sha256 = "sha256-rnN/ITMKuQIWpn8hkD+qYcrB9PqLsM52BDuQ9j7Eqyw=";
+  molecule = with python-pkgs; buildPythonApplication
+    rec {
+      pname = "molecule";
+      version = "5.0.0a0";
+      format = "pyproject";
+
+      src = super.fetchFromGitHub {
+        owner = "ansible-community";
+        repo = "molecule";
+        rev = "v${version}";
+        hash = "sha256-bWJ+mMZvsrNzWkgzfurK/X3nXJeW+OqOUGM2VZ8srWg=";
+      };
+
+      nativeBuildInputs = [
+        setuptools
+        setuptools_scm
+      ];
+
+      propagatedBuildInputs = [
+        # molecule-plugins
+        jinja2
+        pyyaml
+        ansible-compat
+        ansible-core
+        click
+        click-help-colors
+        cookiecutter
+        enrich
+        jsonschema
+        packaging
+        pluggy
+        rich
+      ];
+
+      passthru.optional-dependencies = {
+        docs = [
+          argparse-manpage
+          cairosvg
+          markdown-include
+          mkdocs
+          mkdocs-git-revision-date-localized-plugin
+          mkdocs-material
+          mkdocs-material-extensions
+          mkdocs-multirepo-plugin
+          mkdocstrings
+          pillow
+          pymdown-extensions
+        ];
+        lint = [
+          check-jsonschema
+          flake8
+          jsonschema
+          pre-commit
+          yamllint
+        ];
+        test = [
+          ansi2html
+          ansible-lint
+          coverage
+          filelock
+          pexpect
+          pytest
+          pytest-mock
+          pytest-plus
+          pytest-testinfra
+          pytest-xdist
+        ];
+      };
+
+      pythonImportsCheck = [ "molecule" ];
+      makeWrapperArgs = [ "--unset PYTHONPATH" ];
+
+      meta = with lib; {
+        description = "Molecule aids in the development and testing of Ansible roles";
+        homepage = "https://github.com/ansible-community/molecule";
+        license = licenses.mit;
+        maintainers = with maintainers; [ ];
+      };
     };
-    doCheck = false;
-    makeWrapperArgs = [ "--unset PYTHONPATH" ];
-    propagatedBuildInputs = [
+
+  molecule-full = molecule.overridePythonAttrs (old: {
+    makeWrapperArgs = [ "--set PYTHONPATH ${molecule-plugins}/lib/python3.10/site-packages" ];
+  });
+
+  molecule-plugins = with python-pkgs; buildPythonApplication rec {
+    pname = "molecule-plugins";
+    version = "23.0.0";
+    format = "pyproject";
+
+    src = fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-mHXODJRikvnm2IUTm4BhskCpZvllI80OMw6Z4OxjGyk=";
+    };
+
+    nativeBuildInputs = [
       setuptools
-      click-help-colors
-      jinja2
-      enrich
-      jsonschema
-      packaging
-      pluggy
-      pyyaml
-      rich
-      cookiecutter
-      ansible-compat
-      ansible-core
+      setuptools_scm
     ];
+
+    propagatedBuildInputs = [
+      molecule
+    ];
+
+    passthru.optional-dependencies = {
+      docker = [
+        docker
+        requests
+        selinux
+      ];
+      podman = [
+        selinux
+      ];
+      test = [
+        molecule
+        pytest-helpers-namespace
+      ];
+    };
+
+    # pythonImportsCheck = [ "molecule-plugins" ];
+
+    meta = with lib; {
+      description = "Collection on molecule plugins";
+      homepage = "https://github.com/ansible-community/molecule-plugins";
+      license = licenses.mit;
+      maintainers = with maintainers; [ ];
+    };
   };
 
   ansible-lint = super.python310Packages.ansible-lint.overridePythonAttrs (old: {
